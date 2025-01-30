@@ -58,12 +58,20 @@ def transition_model(corpus, page, damping_factor):
     a link at random chosen from all pages in the corpus.
     """
     result = dict()
-    for p in corpus:
-        result[p] = (1-damping_factor) / len(corpus)
+    N = len(corpus)
     
-    for p in corpus[page]:
-        result[p] = result[p] + damping_factor / len(corpus[page])
+    # 处理无出链的情况
+    if not corpus[page]:
+        return {p: 1/N for p in corpus}
         
+    # 基础概率
+    for p in corpus:
+        result[p] = (1-damping_factor) / N
+    
+    # 链接概率
+    for p in corpus[page]:
+        result[p] += damping_factor / len(corpus[page])
+    
     return result
 
 
